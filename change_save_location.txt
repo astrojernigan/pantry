@@ -1,0 +1,12 @@
+To change cgenie save location, change the following locations to the new directory:
+
+OUT_DIR in cgenie.muffin/genie-main/user.mak
+OUTROOT in cgenie.muffin/genie-main/user.sh
+OUTPUTDIR in cgenie.muffin/genie-main/runmuffin.sh
+
+If this is the first time you have changed the save location,
+change the following paths from relative (using ../)
+to absolute (specifying entire path):
+
+RUNTIME_ROOT in cgenie.muffin/genie-main/user.mak
+RUNTIME_ROOT in cgenie.muffin/genie-main/user.sh 

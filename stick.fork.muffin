@@ -1,0 +1,51 @@
+#!/bin/bash
+
+## Checks cgenie .out files and reports on whether they ended correctly
+## Requires that the .out files are named as 'var1_var2_var3_var4.out', or as modified
+## To call: bash check.output.sh arg1 arg2 arg3 arg4
+## Multiple files can be called at once using lists, will check each combination of arguments
+## Lists are enclosed by single quotes and elements are separated by spaces: 'arg1.1 arg1.2 arg1.3 ... arg1.n'
+
+## Parameters to be varied ##
+
+eccentricities=$1 # $n is the nth argument passed to the script
+obliquities=$2
+length=$3
+other=$4
+
+## Message displayed if model finished succesfully ##
+
+pattern="  *** Simulation complete: shutdown starting ..."
+
+## Iterating through each combination of arguments ##
+
+for obl in $obliquities
+do
+	for ecc in $eccentricities
+	do
+		for l in $length
+		do
+			for x in $other
+			do
+				filename=${ecc}_${obl}_${l}_${x} 				  # output file syntax
+
+				if grep -q -F "${pattern}" ${filename}.out			  # check for completion message
+				then
+					echo "${filename} completed"				  # confirm experiment finished
+				else
+					echo "${filename} failed"
+					tail -10 "${filename}.out"
+				fi
+
+				. start.python.sh 					  # load python environment
+
+				if [ $l = "short" ]
+				then
+					python $HOME/python_scripts/steady_short.py "${filename}" # run steady state plot script (modified for short runs), passing experiment name
+				else
+					python $HOME/python_scripts/steady_state.py "${filename}" # run steady state plot script, passing experiment name
+				fi
+			done
+		done
+	done
+done
